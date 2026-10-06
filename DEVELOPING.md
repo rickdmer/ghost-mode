@@ -13,8 +13,9 @@ XAML can't be compiled by it either, so `src\MainWindow.xaml` is embedded as a r
 `XamlReader`; event handlers are attached in `App.cs` by element name. Close the app before building.
 
 Releases are built by `.github/workflows/release.yml`: pushing a `v*` tag builds on a Windows runner, zips
-`GhostMode.exe` + `GhostMode.exe.config`, and publishes a GitHub release using the annotated tag's message as the
-release notes. Bump the version in `src\AssemblyInfo.cs` first.
+`GhostMode.exe` + `GhostMode.exe.config`, and publishes a GitHub release. The annotated tag's first line should be
+the title (e.g. `Ghost Mode 1.1`); the rest of its message becomes the release notes. Bump the version in
+`src\AssemblyInfo.cs` first.
 
 ## Command line
 
