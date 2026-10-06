@@ -190,6 +190,8 @@ namespace GhostMode
     {
         public ObservableCollection<AppItem> Apps { get; private set; }
         public ICommand ToggleCommand { get; private set; }
+        public ICommand GoInvisibleCommand { get; private set; }
+        public ICommand GoOnlineCommand { get; private set; }
         public ICommand RefreshCommand { get; private set; }
 
         readonly Settings settings;
@@ -214,7 +216,9 @@ namespace GhostMode
                 settings.LastKnown.TryGetValue(p.Id, out saved);
                 Apps.Add(new AppItem(p, this, enabled, saved));
             }
-            ToggleCommand = new RelayCommand(() => Toggle(false), () => !IsBusy && Apps.Any(a => a.Included));
+            ToggleCommand = new RelayCommand(() => Toggle(false), () => CanRun);
+            GoInvisibleCommand = new RelayCommand(() => SetAll(true, false), () => CanRun);
+            GoOnlineCommand = new RelayCommand(() => SetAll(false, false), () => CanRun);
             RefreshCommand = new RelayCommand(Refresh, () => !IsBusy);
 
             SystemIntegration.RepairPaths();
@@ -304,7 +308,7 @@ namespace GhostMode
         public bool IsBusy
         {
             get { return busy; }
-            private set { busy = value; Raise("IsBusy", "PrimaryText"); foreach (var a in Apps) a.Refresh(); CommandManager.InvalidateRequerySuggested(); }
+            private set { busy = value; Raise("IsBusy", "InvisibleText", "OnlineText"); foreach (var a in Apps) a.Refresh(); CommandManager.InvalidateRequerySuggested(); }
         }
 
         /// <summary>Toggle all included apps. Direction is decided after a fresh poll: if any are visible, hide everything.</summary>
@@ -463,7 +467,7 @@ namespace GhostMode
 
         public void OnItemChanged()
         {
-            Raise("Headline", "Subline", "PrimaryText", "PrimaryGlyph", "PrimaryBrush", "IncludedSummary");
+            Raise("Headline", "Subline", "ShowGoInvisible", "ShowGoOnline", "GoInvisibleVisibility", "GoOnlineVisibility", "IncludedSummary");
             CommandManager.InvalidateRequerySuggested();
         }
 
@@ -499,10 +503,16 @@ namespace GhostMode
             }
         }
 
-        bool AllHidden { get { var inc = Included.ToList(); return inc.Count > 0 && inc.All(a => a.IsHidden); } }
-        public string PrimaryText { get { return IsBusy ? "Working\u2026" : AllHidden ? "Go online" : "Go invisible"; } }
-        public string PrimaryGlyph { get { return AllHidden ? "\uE890" : "\uED1A"; } }
-        public Brush PrimaryBrush { get { return AllHidden ? Palette.Online : Palette.Blurple; } }
+        public bool CanRun { get { return !IsBusy && Apps.Any(a => a.Included); } }
+
+        // One action button normally ("Go invisible" while anything shows you online, "Go online" once everything is
+        // hidden); both side by side when the included apps are mixed, so either direction is one click.
+        public bool ShowGoInvisible { get { var inc = Included.ToList(); return inc.Count == 0 || inc.Any(a => !a.IsHidden); } }
+        public bool ShowGoOnline { get { return Included.Any(a => a.IsHidden); } }
+        public Visibility GoInvisibleVisibility { get { return ShowGoInvisible ? Visibility.Visible : Visibility.Collapsed; } }
+        public Visibility GoOnlineVisibility { get { return ShowGoOnline ? Visibility.Visible : Visibility.Collapsed; } }
+        public string InvisibleText { get { return IsBusy ? "Working\u2026" : "Go invisible"; } }
+        public string OnlineText { get { return IsBusy ? "Working\u2026" : "Go online"; } }
 
         public string IncludedSummary
         {
@@ -514,7 +524,7 @@ namespace GhostMode
         }
 
         string footer;
-        public string Footer { get { return footer; } set { footer = value; Raise("Footer", "PrimaryText"); } }
+        public string Footer { get { return footer; } set { footer = value; Raise("Footer"); } }
 
         static string Plural(int n, string word) { return n + " " + word + (n == 1 ? "" : "s"); }
     }

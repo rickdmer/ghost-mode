@@ -114,6 +114,16 @@ namespace GhostMode
             SetCursorPos(old.X, old.Y);
         }
 
+        [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(POINT p);
+
+        /// <summary>True if the window under this screen point is a UWP frame's caption overlay rather than app content.</summary>
+        public static bool IsCaptionOverlay(int x, int y)
+        {
+            var h = WindowFromPoint(new POINT { X = x, Y = y });
+            var c = new StringBuilder(256); GetClassName(h, c, 256);
+            return c.ToString() == "ApplicationFrameTitleBarWindow";
+        }
+
         public static void PressEscape()
         {
             keybd_event(0x1B, 0, 0, UIntPtr.Zero);

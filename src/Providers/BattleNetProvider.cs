@@ -68,7 +68,7 @@ namespace GhostMode
 
         public override Presence? Probe()
         {
-            using (var s = Session()) { var h = s.Handle; return WaitForDot(() => ReadDot(h), 6000); }
+            using (var s = Session()) { var h = s.Handle; return WaitForDot(() => ReadDot(h), 10000); }
         }
 
         public override SetResult Set(bool invisible)
@@ -76,8 +76,8 @@ namespace GhostMode
             using (var s = Session())
             {
                 var h = s.Handle;
-                var before = WaitForDot(() => ReadDot(h), 6000);
-                if (!before.HasValue) throw new InvalidOperationException("couldn't read the status dot; the layout may have moved");
+                var before = WaitForDot(() => ReadDot(h), 10000);
+                if (!before.HasValue) throw new InvalidOperationException("couldn't read the status dot (" + DescribePixel(h, StatusDot[0], StatusDot[1], true) + "); the layout may have moved");
                 var target = invisible ? Presence.Invisible : Presence.Online;
                 if (before == target) return new SetResult(target, "already " + (invisible ? "appear offline" : "online"));
 

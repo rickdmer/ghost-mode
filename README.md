@@ -37,8 +37,10 @@ hotkey, and starting with Windows. All are off unless you switch them on, and yo
 
 ## Using it
 
-- **Go invisible / Go online**: the big button. If any included app is showing you online, it hides you everywhere;
-  if you're already invisible everywhere, it brings you back online.
+- **Go invisible / Go online**: the big button. While every included app shows you online it says **Go invisible**;
+  once you're invisible everywhere it says **Go online**. If your apps are mixed (some invisible, some online), you
+  get both buttons side by side, so either direction is one click. The tray icon's menu offers the same choices.
+  Ctrl+Alt+I goes invisible when your apps are mixed.
 - **Switches** next to each app choose whether that app is included when you press the big button.
 - **Click an app's status** (e.g. "Online ⌄") to set just that app to Online or Invisible.
 - **Check status** takes a fresh look at apps whose status Ghost Mode can't see in the background (see below).

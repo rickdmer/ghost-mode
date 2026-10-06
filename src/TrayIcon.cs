@@ -5,21 +5,17 @@ using System.Windows.Forms;
 namespace GhostMode
 {
     /// <summary>
-    /// Ghost Mode's notification-area icon. Left-click opens the window; right-click offers Open / toggle / Exit.
+    /// Ghost Mode's notification-area icon. Left-click opens the window; right-click offers Open / Go invisible / Go online / Exit.
     /// Also used for the balloons shown after a hotkey toggle or the first time the window goes to the tray.
     /// </summary>
     sealed class TrayIcon : IDisposable
     {
         readonly NotifyIcon icon;
-        readonly ToolStripMenuItem toggleItem;
-        readonly Func<string> toggleLabel;
-        readonly Func<bool> canToggle;
 
-        public TrayIcon(Action open, Action toggle, Func<string> toggleLabel, Func<bool> canToggle, Action exit)
+        /// <summary>showInvisible / showOnline say which of the two actions to offer right now (both when apps are mixed).</summary>
+        public TrayIcon(Action open, Action goInvisible, Action goOnline, Func<bool> showInvisible, Func<bool> showOnline,
+                        Func<bool> canRun, Action exit)
         {
-            this.toggleLabel = toggleLabel;
-            this.canToggle = canToggle;
-
             var menu = new ContextMenuStrip
             {
                 Renderer = new ToolStripProfessionalRenderer(new DarkColors()) { RoundedEdges = false },
@@ -29,15 +25,18 @@ namespace GhostMode
             };
             var openItem = Item("Open Ghost Mode", open);
             openItem.Font = new Font(menu.Font, FontStyle.Bold);
-            toggleItem = Item("Go invisible", toggle);
+            var invisibleItem = Item("Go invisible", goInvisible);
+            var onlineItem = Item("Go online", goOnline);
             menu.Items.Add(openItem);
-            menu.Items.Add(toggleItem);
+            menu.Items.Add(invisibleItem);
+            menu.Items.Add(onlineItem);
             menu.Items.Add(new ToolStripSeparator());
             menu.Items.Add(Item("Exit", exit));
             menu.Opening += (s, e) =>
             {
-                toggleItem.Text = this.toggleLabel();
-                toggleItem.Enabled = this.canToggle();
+                invisibleItem.Visible = showInvisible();
+                onlineItem.Visible = showOnline();
+                invisibleItem.Enabled = onlineItem.Enabled = canRun();
             };
 
             icon = new NotifyIcon { ContextMenuStrip = menu, Text = "Ghost Mode" };

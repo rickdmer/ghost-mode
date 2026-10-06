@@ -124,7 +124,11 @@ namespace GhostMode
         {
             var r = el.Current.BoundingRectangle;
             if (r.IsEmpty) throw new InvalidOperationException("'" + el.Current.Name + "' isn't on screen");
-            Native.Click((int)(r.X + r.Width / 2), (int)(r.Y + r.Height / 2));
+            int x = (int)(r.X + r.Width / 2), y = (int)(r.Y + r.Height / 2);
+            // UWP apps (e.g. Xbox) sit under an invisible caption window covering the top strip of the frame, which
+            // swallows clicks. If the centre is under it, click further down the element instead.
+            for (int tryY = y; tryY < r.Bottom - 2 && Native.IsCaptionOverlay(x, tryY); tryY += 3) y = tryY + 3;
+            Native.Click(x, Math.Min(y, (int)r.Bottom - 2));
             Thread.Sleep(300);
         }
 
@@ -175,6 +179,17 @@ namespace GhostMode
             if (c.R > 150 && c.G > 90 && c.B < 90) return Presence.Away;
             if (c.R > 150 && c.G < 90) return Presence.Busy;
             return Presence.Unknown;
+        }
+
+        /// <summary>"R,G,B" of a client-area pixel, for error messages when a status dot can't be recognised.</summary>
+        protected static string DescribePixel(IntPtr hwnd, int dx, int dy, bool fromRight)
+        {
+            try
+            {
+                var c = SnapshotPixel(hwnd, dx, dy, fromRight);
+                return c.HasValue ? "saw colour " + c.Value.R + "," + c.Value.G + "," + c.Value.B : "window couldn't be captured";
+            }
+            catch (Exception ex) { return ex.Message; }
         }
 
         /// <summary>Polls a dot reader until the page has loaded enough to show a recognisable status.</summary>

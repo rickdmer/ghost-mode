@@ -94,7 +94,7 @@ namespace GhostMode
 
         public override Presence? Probe()
         {
-            using (var s = Session()) { var h = s.Handle; return WaitForDot(() => ReadDot(h), 6000); }
+            using (var s = Session()) { var h = s.Handle; return WaitForDot(() => ReadDot(h), 10000); }
         }
 
         public override SetResult Set(bool invisible)
@@ -103,8 +103,8 @@ namespace GhostMode
             {
                 var h = s.Handle;
                 var target = invisible ? Presence.Invisible : Presence.Online;
-                var before = WaitForDot(() => ReadDot(h), 6000);
-                if (!before.HasValue) throw new InvalidOperationException("couldn't read the status dot; the layout may have moved");
+                var before = WaitForDot(() => ReadDot(h), 10000);
+                if (!before.HasValue) throw new InvalidOperationException("couldn't read the status dot (" + DescribePixel(h, StatusDot[0], StatusDot[1], false) + "); the layout may have moved");
                 if (before == target) return new SetResult(target, "already " + target.ToString().ToLower());
 
                 // The menu may still be open from before; otherwise click the avatar (retrying while the page settles)

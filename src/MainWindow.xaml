@@ -273,12 +273,23 @@
             <TextBlock Text="{Binding Subline}" FontSize="13" Foreground="{StaticResource TextMuted}" Margin="0,2,0,0" TextWrapping="Wrap" />
           </StackPanel>
         </Grid>
-        <Button Style="{StaticResource PrimaryButton}" Margin="0,16,0,0" Command="{Binding ToggleCommand}" Background="{Binding PrimaryBrush}">
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding PrimaryGlyph}" FontFamily="{StaticResource IconFont}" FontSize="16" VerticalAlignment="Center" Margin="0,0,10,0" />
-            <TextBlock Text="{Binding PrimaryText}" VerticalAlignment="Center" />
-          </StackPanel>
-        </Button>
+        <!-- One button, or both side by side when apps are mixed (UniformGrid skips collapsed children) -->
+        <UniformGrid Rows="1" Margin="-4,16,-4,0">
+          <Button Style="{StaticResource PrimaryButton}" Margin="4,0" Command="{Binding GoInvisibleCommand}" Background="#5865F2"
+                  Visibility="{Binding GoInvisibleVisibility}">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="&#xED1A;" FontFamily="{StaticResource IconFont}" FontSize="16" VerticalAlignment="Center" Margin="0,0,10,0" />
+              <TextBlock Text="{Binding InvisibleText}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource PrimaryButton}" Margin="4,0" Command="{Binding GoOnlineCommand}" Background="#23A55A"
+                  Visibility="{Binding GoOnlineVisibility}">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="&#xE890;" FontFamily="{StaticResource IconFont}" FontSize="16" VerticalAlignment="Center" Margin="0,0,10,0" />
+              <TextBlock Text="{Binding OnlineText}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </UniformGrid>
         <TextBlock Text="{Binding HotkeyHint}" Visibility="{Binding HotkeyHintVisibility}" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="12" Foreground="#80848E" />
       </StackPanel>
     </Border>

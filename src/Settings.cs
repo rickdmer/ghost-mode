@@ -80,7 +80,16 @@ namespace GhostMode
                     if (fi.Exists && fi.Length > 512 * 1024) fi.Delete();
                     File.AppendAllText(FilePath, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "  " + message + Environment.NewLine, Encoding.UTF8);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    // Don't lose the message (or the reason the log can't be written) silently
+                    try
+                    {
+                        File.AppendAllText(Path.Combine(Path.GetTempPath(), "GhostMode-log.txt"),
+                            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "  [log unwritable: " + ex.Message + "]  " + message + Environment.NewLine, Encoding.UTF8);
+                    }
+                    catch { }
+                }
             }
         }
     }

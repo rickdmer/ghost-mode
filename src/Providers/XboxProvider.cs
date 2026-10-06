@@ -68,9 +68,12 @@ namespace GhostMode
         static AutomationElement OpenMenu(AutomationElement root, AutomationElement button)
         {
             var item = FindByNameRegex(root, ItemPattern);
-            if (item != null) return item;
-            ClickElement(button);
-            return Native.WaitFor(() => FindByNameRegex(root, ItemPattern), 4000);
+            for (int attempt = 0; attempt < 3 && item == null; attempt++)
+            {
+                ClickElement(button);
+                item = Native.WaitFor(() => FindByNameRegex(root, ItemPattern), 2500);
+            }
+            return item;
         }
 
         static WindowSession Session()
@@ -92,7 +95,7 @@ namespace GhostMode
                 var root = AutomationElement.FromHandle(session.Handle);
                 var button = ProfileButton(root);
                 var item = OpenMenu(root, button);
-                if (item == null) return null;
+                if (item == null) throw new InvalidOperationException("profile menu didn't open");
                 var label = item.Current.Name;
                 ClickElement(button);
                 return label == "Appear online" ? Presence.Invisible : Presence.Online;

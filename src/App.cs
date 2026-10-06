@@ -112,8 +112,8 @@ namespace GhostMode
             };
             Action exit = () => { exiting = true; window.Close(); };
 
-            tray = new TrayIcon(showWindow, () => vm.Toggle(true), () => vm.PrimaryText,
-                                () => vm.ToggleCommand.CanExecute(null), exit);
+            tray = new TrayIcon(showWindow, () => vm.SetAll(true, true), () => vm.SetAll(false, true),
+                                () => vm.ShowGoInvisible, () => vm.ShowGoOnline, () => vm.CanRun, exit);
             tray.SetTooltip("Ghost Mode \u2013 " + vm.Headline);
             vm.PropertyChanged += (s, e) => { if (e.PropertyName == "Headline") tray.SetTooltip("Ghost Mode \u2013 " + vm.Headline); };
 
