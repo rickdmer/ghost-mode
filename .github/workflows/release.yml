@@ -1,0 +1,35 @@
+# Pushing a tag like v1.0 builds Ghost Mode on Windows and publishes a GitHub release with the zip attached.
+# The annotated tag's message becomes the release notes.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        shell: pwsh
+        run: ./build.ps1
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $version = '${{ github.ref_name }}'.TrimStart('v')
+          Compress-Archive -Path bin/GhostMode.exe, bin/GhostMode.exe.config -DestinationPath "GhostMode-$version.zip"
+
+      - name: Publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = '${{ github.ref_name }}'.TrimStart('v')
+          git fetch --force origin "refs/tags/${{ github.ref_name }}:refs/tags/${{ github.ref_name }}"
+          gh release create '${{ github.ref_name }}' "GhostMode-$version.zip" --title "Ghost Mode $version" --notes-from-tag
