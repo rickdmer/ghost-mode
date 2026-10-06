@@ -21,7 +21,8 @@ Supported apps: **Discord**, **Steam**, **Xbox** (the Xbox app for PC), **Battle
 
 ## Download and install
 
-1. Go to the [**Releases**](../../releases/latest) page and download `GhostMode-1.0.zip`.
+1. Go to the [**latest release**](../../releases/latest) and download the `GhostMode-<version>.zip` file under
+   **Assets**.
 2. Extract it to a folder you'll keep, for example `Documents\Ghost Mode`. Keep both files together.
 3. Double-click **GhostMode.exe**.
 
