@@ -97,3 +97,7 @@ It only clicks the same status menus you would. Steam is changed through Steam's
 ## For developers
 
 See [DEVELOPING.md](DEVELOPING.md) for how it's built and how to add support for another app.
+
+## License
+
+Ghost Mode is free and open source under the [MIT License](LICENSE).

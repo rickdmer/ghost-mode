@@ -4,5 +4,6 @@ using System.Reflection;
 [assembly: AssemblyTitle("Ghost Mode")]
 [assembly: AssemblyProduct("Ghost Mode")]
 [assembly: AssemblyDescription("Appear offline on Discord, Steam, Xbox, Battle.net and GOG Galaxy at once")]
+[assembly: AssemblyCopyright("Copyright (c) 2026 Rick. MIT License.")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
